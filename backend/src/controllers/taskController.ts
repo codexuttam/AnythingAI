@@ -5,6 +5,8 @@ import { z } from 'zod';
 const taskSchema = z.object({
     title: z.string().min(1),
     description: z.string().min(1),
+    priority: z.enum(['low', 'medium', 'high']).optional(),
+    tags: z.array(z.string()).optional(),
 });
 
 export const getTasks = async (req: any, res: Response, next: NextFunction) => {

@@ -26,7 +26,8 @@ import {
     StickyNote,
     Zap,
     ChevronRight,
-    Edit3
+    Edit3,
+    Activity
 } from 'lucide-react';
 import { ANONYMOUS_QUOTES } from '@/lib/quotes';
 
@@ -35,15 +36,24 @@ interface Task {
     title: string;
     description: string;
     status: 'pending' | 'completed';
+    priority?: 'low' | 'medium' | 'high';
+    tags?: string[];
     user: any;
     createdAt: string;
 }
 
-interface Activity {
+interface TaskActivity {
     id: string;
-    type: 'created' | 'completed' | 'deleted';
+    type: 'created' | 'completed' | 'deleted' | 'system';
     text: string;
     time: string;
+}
+
+interface PomodoroState {
+    minutes: number;
+    seconds: number;
+    isActive: boolean;
+    mode: 'work' | 'break';
 }
 
 const TiltCard = ({ children, className, compact = false }: { children: React.ReactNode, className?: string, compact?: boolean }) => {
@@ -65,7 +75,7 @@ const TiltCard = ({ children, className, compact = false }: { children: React.Re
 
 export default function DashboardPage() {
     const [tasks, setTasks] = useState<Task[]>([]);
-    const [activities, setActivities] = useState<Activity[]>([]);
+    const [activities, setActivities] = useState<TaskActivity[]>([]);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>(null);
     const [activeTab, setActiveTab] = useState<'tasks' | 'activities' | 'settings'>('tasks');
@@ -85,6 +95,11 @@ export default function DashboardPage() {
     const [newTitle, setNewTitle] = useState('');
     const [newDesc, setNewDesc] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [priorityFilter, setPriorityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
+    const [isProMode, setIsProMode] = useState(false);
+    const [pomodoro, setPomodoro] = useState<PomodoroState>({ minutes: 25, seconds: 0, isActive: false, mode: 'work' });
+    const [taskPriority, setTaskPriority] = useState<'low' | 'medium' | 'high'>('medium');
+    const [completionRate, setCompletionRate] = useState(0);
 
     const router = useRouter();
 
@@ -111,11 +126,48 @@ export default function DashboardPage() {
         if (storedImg) setProfileImage(storedImg);
         if (storedNotes) setQuickNotes(storedNotes);
 
+        const storedPro = localStorage.getItem('isProMode') === 'true';
+        setIsProMode(storedPro);
+
         const quote = ANONYMOUS_QUOTES[Math.floor(Math.random() * ANONYMOUS_QUOTES.length)];
         setRandomQuote(quote);
 
         fetchTasks();
     }, [router]);
+
+    useEffect(() => {
+        if (tasks.length > 0) {
+            const completed = tasks.filter(t => t.status === 'completed').length;
+            setCompletionRate(Math.round((completed / tasks.length) * 100));
+        } else {
+            setCompletionRate(0);
+        }
+    }, [tasks]);
+
+    useEffect(() => {
+        let timer: any;
+        if (pomodoro.isActive) {
+            timer = setInterval(() => {
+                if (pomodoro.seconds > 0) {
+                    setPomodoro(prev => ({ ...prev, seconds: prev.seconds - 1 }));
+                } else if (pomodoro.minutes > 0) {
+                    setPomodoro(prev => ({ ...prev, minutes: prev.minutes - 1, seconds: 59 }));
+                } else {
+                    clearInterval(timer);
+                    const nextMode = pomodoro.mode === 'work' ? 'break' : 'work';
+                    setPomodoro({
+                        minutes: nextMode === 'work' ? 25 : 5,
+                        seconds: 0,
+                        isActive: false,
+                        mode: nextMode
+                    });
+                    toast.success(nextMode === 'work' ? 'Break over! Focus time.' : 'Mission segment complete. Take a break.');
+                    addActivity('system', `Pomodoro session: ${pomodoro.mode} finished.`);
+                }
+            }, 1000);
+        }
+        return () => clearInterval(timer);
+    }, [pomodoro.isActive, pomodoro.minutes, pomodoro.seconds, pomodoro.mode]);
 
     useEffect(() => {
         localStorage.setItem('activities', JSON.stringify(activities));
@@ -130,6 +182,26 @@ export default function DashboardPage() {
         setTheme(newTheme);
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
+    };
+
+    const toggleProMode = () => {
+        const next = !isProMode;
+        setIsProMode(next);
+        localStorage.setItem('isProMode', String(next));
+        toast.success(next ? 'Neural Overclock Enabled' : 'Standard Protocol Restored');
+    };
+
+    const togglePomodoro = () => {
+        setPomodoro(prev => ({ ...prev, isActive: !prev.isActive }));
+    };
+
+    const resetPomodoro = () => {
+        setPomodoro({
+            minutes: pomodoro.mode === 'work' ? 25 : 5,
+            seconds: 0,
+            isActive: false,
+            mode: pomodoro.mode
+        });
     };
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,14 +224,30 @@ export default function DashboardPage() {
         toast.success('Profile identity updated');
     };
 
-    const addActivity = (type: Activity['type'], text: string) => {
-        const newActivity: Activity = {
+    const addActivity = (type: TaskActivity['type'], text: string) => {
+        const newActivity: TaskActivity = {
             id: Math.random().toString(36).substr(2, 9),
             type,
             text,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
-        setActivities(prev => [newActivity, ...prev].slice(0, 10));
+        setActivities(prev => [newActivity, ...prev].slice(0, 15));
+    };
+
+    const brainstormTask = (title: string) => {
+        const suggestions = [
+            "Break down into 3-phase execution",
+            "Identify potential security vulnerabilities",
+            "Optimize for high-concurrency scenarios",
+            "Implement automated regression testing",
+            "Review architectural compliance"
+        ];
+        const random = suggestions[Math.floor(Math.random() * suggestions.length)];
+        toast(`Quantum Insight: ${random}`, {
+            icon: '🧠',
+            duration: 4000
+        });
+        addActivity('system', `AI Analysis for "${title}": ${random}`);
     };
 
     const fetchTasks = async () => {
@@ -179,11 +267,16 @@ export default function DashboardPage() {
     const handleCreateTask = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await api.post('/tasks', { title: newTitle, description: newDesc });
+            const response = await api.post('/tasks', {
+                title: newTitle,
+                description: newDesc,
+                priority: taskPriority
+            });
             setTasks([response.data.data, ...tasks]);
-            addActivity('created', `Created task: ${newTitle}`);
+            addActivity('created', `Created task: ${newTitle} [${taskPriority.toUpperCase()}]`);
             setNewTitle('');
             setNewDesc('');
+            setTaskPriority('medium');
             toast.success('Objective deployed');
         } catch (error: any) {
             toast.error(error.response?.data?.error || 'Deployment failed');
@@ -218,10 +311,12 @@ export default function DashboardPage() {
         router.push('/login');
     };
 
-    const filteredTasks = tasks.filter(t =>
-        t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        t.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredTasks = tasks.filter(t => {
+        const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            t.description.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesPriority = priorityFilter === 'all' || t.priority === priorityFilter;
+        return matchesSearch && matchesPriority;
+    });
 
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center bg-background">
@@ -236,8 +331,15 @@ export default function DashboardPage() {
     return (
         <div className="min-h-screen flex transition-colors duration-500 overflow-hidden bg-background">
             {/* Compact Sidebar */}
-            <aside className="hidden lg:flex flex-col w-72 glass-card m-4 rounded-[2rem] p-6 border-card-border h-[calc(100vh-2rem)] sticky top-4 z-20">
-                <div className="flex items-center gap-3 mb-8 px-2">
+            <aside className="hidden lg:flex flex-col w-72 glass-card m-4 rounded-[2rem] p-6 border-card-border h-[calc(100vh-2rem)] sticky top-4 z-20 overflow-hidden">
+                {isProMode && (
+                    <motion.div
+                        animate={{ opacity: [0.1, 0.3, 0.1] }}
+                        transition={{ duration: 4, repeat: Infinity }}
+                        className="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent pointer-events-none"
+                    />
+                )}
+                <div className="flex items-center gap-3 mb-8 px-2 relative z-10">
                     <motion.div
                         whileHover={{ scale: 1.1, rotate: 15 }}
                         className="p-2 bg-gradient-to-br from-primary to-primary-dark rounded-xl shadow-lg"
@@ -267,6 +369,18 @@ export default function DashboardPage() {
                             {item.label}
                         </motion.button>
                     ))}
+
+                    <div className="pt-4 mt-4 border-t border-card-border/50">
+                        <button
+                            onClick={toggleProMode}
+                            className={`flex items-center gap-3 w-full p-4 rounded-2xl font-bold text-xs transition-all ${isProMode
+                                ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                                : 'text-muted hover:bg-hover-bg'}`}
+                        >
+                            <Zap className={`w-4 h-4 ${isProMode ? 'fill-amber-500' : ''}`} />
+                            {isProMode ? 'NEURAL LINK: ON' : 'ENABLE PRO MODE'}
+                        </button>
+                    </div>
                 </nav>
 
                 <div className="mt-auto pt-6 border-t border-card-border">
@@ -313,27 +427,59 @@ export default function DashboardPage() {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <motion.button
-                            whileTap={{ scale: 0.9 }}
-                            onClick={toggleTheme}
-                            className="p-3 bg-white/5 rounded-2xl border border-white/5 text-foreground hover:bg-primary/10 hover:border-primary/20 transition-all"
-                        >
-                            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                        </motion.button>
-
-                        {activeTab === 'tasks' && (
-                            <div className="relative group">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                                <input
-                                    type="text"
-                                    placeholder="Query knowledge..."
-                                    className="pl-11 pr-4 py-3 rounded-2xl glass-input text-foreground text-sm font-medium w-48 lg:w-64"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
+                    <div className="flex md:flex-col lg:flex-row items-center gap-6">
+                        {/* Mission Progress */}
+                        <div className="hidden sm:flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/5">
+                            <div className="relative w-12 h-12">
+                                <svg className="w-full h-full" viewBox="0 0 36 36">
+                                    <path
+                                        className="text-white/5 stroke-current"
+                                        strokeWidth="3"
+                                        fill="none"
+                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    />
+                                    <motion.path
+                                        initial={{ pathLength: 0 }}
+                                        animate={{ pathLength: completionRate / 100 }}
+                                        className="text-primary stroke-current"
+                                        strokeWidth="3"
+                                        strokeDasharray="100, 100"
+                                        fill="none"
+                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    />
+                                </svg>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <span className="text-[10px] font-black text-foreground">{completionRate}%</span>
+                                </div>
                             </div>
-                        )}
+                            <div className="hidden lg:block">
+                                <p className="text-[10px] font-black text-muted uppercase tracking-widest">Efficiency</p>
+                                <p className="text-xs font-bold text-foreground">Mission Status</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <motion.button
+                                whileTap={{ scale: 0.9 }}
+                                onClick={toggleTheme}
+                                className="p-3 bg-white/5 rounded-2xl border border-white/5 text-foreground hover:bg-primary/10 hover:border-primary/20 transition-all"
+                            >
+                                {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                            </motion.button>
+
+                            {activeTab === 'tasks' && (
+                                <div className="relative group">
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                    <input
+                                        type="text"
+                                        placeholder="Query knowledge..."
+                                        className="pl-11 pr-4 py-3 rounded-2xl glass-input text-foreground text-sm font-medium w-48 lg:w-64"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </header>
 
@@ -384,11 +530,65 @@ export default function DashboardPage() {
                                                 onChange={(e) => setNewDesc(e.target.value)}
                                                 required
                                             ></textarea>
+
+                                            <div className="flex gap-2">
+                                                {(['low', 'medium', 'high'] as const).map((p) => (
+                                                    <button
+                                                        key={p}
+                                                        type="button"
+                                                        onClick={() => setTaskPriority(p)}
+                                                        className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border ${taskPriority === p
+                                                            ? (p === 'high' ? 'bg-rose-500/20 border-rose-500 text-rose-500' : p === 'medium' ? 'bg-amber-500/20 border-amber-500 text-amber-500' : 'bg-emerald-500/20 border-emerald-500 text-emerald-500')
+                                                            : 'bg-white/5 border-transparent text-slate-500'
+                                                            }`}
+                                                    >
+                                                        {p}
+                                                    </button>
+                                                ))}
+                                            </div>
+
                                             <button type="submit" className="w-full py-3.5 rounded-xl btn-primary text-white font-black text-sm">
                                                 Deploy Objective
                                             </button>
                                         </form>
                                     </TiltCard>
+
+                                    {isProMode && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                        >
+                                            <TiltCard className="p-6 rounded-[2rem] border-card-border overflow-hidden relative" compact>
+                                                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16" />
+                                                <h2 className="text-lg font-black text-foreground mb-6 flex items-center gap-3">
+                                                    <Clock className="w-4 h-4 text-primary" />
+                                                    Neural Focus
+                                                </h2>
+                                                <div className="text-center mb-6">
+                                                    <span className="text-5xl font-black text-foreground tracking-tighter tabular-nums">
+                                                        {pomodoro.minutes}:{pomodoro.seconds < 10 ? `0${pomodoro.seconds}` : pomodoro.seconds}
+                                                    </span>
+                                                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-2">
+                                                        {pomodoro.mode === 'work' ? 'Protocol: Deep Work' : 'Protocol: Recovery'}
+                                                    </p>
+                                                </div>
+                                                <div className="flex gap-3">
+                                                    <button
+                                                        onClick={togglePomodoro}
+                                                        className={`flex-1 py-3 rounded-xl font-bold text-xs transition-all ${pomodoro.isActive ? 'bg-rose-500/10 text-rose-500' : 'bg-primary text-white'}`}
+                                                    >
+                                                        {pomodoro.isActive ? 'PAUSE MISSION' : 'START MISSION'}
+                                                    </button>
+                                                    <button
+                                                        onClick={resetPomodoro}
+                                                        className="p-3 bg-white/5 rounded-xl text-foreground hover:bg-white/10"
+                                                    >
+                                                        <Activity className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </TiltCard>
+                                        </motion.div>
+                                    )}
 
                                     <TiltCard className="p-6 rounded-[2rem] border-card-border bg-gradient-to-br from-card-bg to-transparent" compact>
                                         <h2 className="text-lg font-black text-foreground mb-4 flex items-center gap-3">
@@ -416,7 +616,48 @@ export default function DashboardPage() {
                                                 {filteredTasks.length} UNITS
                                             </span>
                                         </h2>
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex bg-white/5 p-1 rounded-xl border border-white/5">
+                                                {(['all', 'high', 'medium', 'low'] as const).map((p) => (
+                                                    <button
+                                                        key={p}
+                                                        onClick={() => setPriorityFilter(p)}
+                                                        className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase transition-all ${priorityFilter === p ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-foreground'
+                                                            }`}
+                                                    >
+                                                        {p}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            <button
+                                                onClick={fetchTasks}
+                                                className="p-2 hover:bg-white/5 rounded-xl text-muted hover:text-primary transition-all"
+                                            >
+                                                <Activity className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </div>
+
+                                    {isProMode && tasks.length > 0 && (
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            className="grid grid-cols-1 sm:grid-cols-3 gap-4"
+                                        >
+                                            <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4">
+                                                <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Health Score</p>
+                                                <p className="text-2xl font-black text-foreground">98.4<small className="text-xs opacity-50">%</small></p>
+                                            </div>
+                                            <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-4">
+                                                <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Neural Load</p>
+                                                <p className="text-2xl font-black text-foreground">Low</p>
+                                            </div>
+                                            <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4">
+                                                <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1">Latency</p>
+                                                <p className="text-2xl font-black text-foreground">14<small className="text-xs opacity-50">ms</small></p>
+                                            </div>
+                                        </motion.div>
+                                    )}
 
                                     {filteredTasks.length === 0 ? (
                                         <div className="glass-card rounded-[2rem] p-16 text-center border-dashed border-card-border">
@@ -434,21 +675,31 @@ export default function DashboardPage() {
                                                 >
                                                     <TiltCard className="rounded-[1.5rem] p-5 group hover:border-primary/30 flex flex-col h-full bg-hover-bg/30" compact>
                                                         <div className="flex items-center justify-between mb-3">
-                                                            <button
-                                                                onClick={() => handleToggleStatus(task)}
-                                                                className={`transition-all ${task.status === 'completed' ? 'text-emerald-400' : 'text-slate-600 hover:text-primary'}`}
-                                                            >
-                                                                {task.status === 'completed' ? <CheckCircle className="w-6 h-6" /> : <Circle className="w-6 h-6" />}
-                                                            </button>
+                                                            <div className="flex items-center gap-2">
+                                                                <button
+                                                                    onClick={() => handleToggleStatus(task)}
+                                                                    className={`transition-all ${task.status === 'completed' ? 'text-emerald-400' : 'text-slate-600 hover:text-primary'}`}
+                                                                >
+                                                                    {task.status === 'completed' ? <CheckCircle className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
+                                                                </button>
+                                                                {task.priority && (
+                                                                    <span className={`text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${task.priority === 'high' ? 'bg-rose-500/10 text-rose-500' :
+                                                                        task.priority === 'medium' ? 'bg-amber-500/10 text-amber-500' :
+                                                                            'bg-emerald-500/10 text-emerald-500'
+                                                                        }`}>
+                                                                        {task.priority}
+                                                                    </span>
+                                                                )}
+                                                            </div>
                                                             <button
                                                                 onClick={() => handleDeleteTask(task._id, task.title)}
                                                                 className="opacity-0 group-hover:opacity-100 transition-opacity p-2 bg-rose-500/10 text-rose-500 rounded-lg"
                                                             >
-                                                                <Trash2 className="w-3.5 h-3.5" />
+                                                                <Trash2 className="w-3 h-3" />
                                                             </button>
                                                         </div>
                                                         <div className="flex-1">
-                                                            <h3 className={`text-base font-black mb-1 line-clamp-1 ${task.status === 'completed' ? 'line-through text-slate-500' : 'text-foreground'}`}>
+                                                            <h3 className={`text-sm font-black mb-1 line-clamp-1 ${task.status === 'completed' ? 'line-through text-slate-500' : 'text-foreground'}`}>
                                                                 {task.title}
                                                             </h3>
                                                             <p className={`text-xs text-slate-500 line-clamp-2 leading-relaxed ${task.status === 'completed' ? 'opacity-40' : ''}`}>
@@ -456,7 +707,18 @@ export default function DashboardPage() {
                                                             </p>
                                                         </div>
                                                         <div className="mt-4 pt-3 border-t border-card-border flex items-center justify-between">
-                                                            <span className="text-[9px] text-slate-600 font-black tracking-widest uppercase italic">{task.user?.name || 'Agent'}</span>
+                                                            <div className="flex items-center gap-3">
+                                                                <span className="text-[9px] text-slate-600 font-black tracking-widest uppercase italic">{task.user?.name || 'Agent'}</span>
+                                                                {isProMode && (
+                                                                    <button
+                                                                        onClick={() => brainstormTask(task.title)}
+                                                                        className="p-1 hover:bg-primary/10 text-primary rounded-lg transition-all"
+                                                                        title="Quantum Brainstorm"
+                                                                    >
+                                                                        <Sparkles className="w-3 h-3" />
+                                                                    </button>
+                                                                )}
+                                                            </div>
                                                             <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-glow" />
                                                         </div>
                                                     </TiltCard>
