@@ -1,0 +1,6 @@
+* fc0c7e8 feat: implement Pro Mode, Neural Focus, and Quantum Priority HUD
+* 90ada0e streak fix
+* e4659d8 Fix theme toggle, resolve hydration issues, and refactor UI components for theme support
+* 768833f Update: Improved ESM support and added MongoDB Atlas configuration
+* dd7be3a Fix: Switch to tsx for ESM support in development
+* 183dc8b Initial commit - Backend & Frontend Assignment

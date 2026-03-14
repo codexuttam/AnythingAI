@@ -1,0 +1,324 @@
+[00:00:03.085] Server  LOG     ✓ Ready in 2.4s
+[00:06:22.194] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:43.726] Server  LOG     ✓ Compiled in 1972ms
+[00:18:35.227] Server  LOG     ✓ Compiled in 678ms
+[00:18:35.407] Browser ERROR   ./Anything AI/frontend/src/app/dashboard/page.tsx:456:26
+Parsing ecmascript source code failed
+  454 |                             )}
+  455 |                         </div>
+> 456 |                 </header>
+      |                          ^
+> 457 |
+      | ^
+> 458 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  459 |                     {activeTab === 'tasks' && (
+  460 |                         <motion.div
+  461 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+[00:18:51.105] Server  LOG     ✓ Compiled in 281ms
+[00:18:51.407] Browser ERROR   ./Anything AI/frontend/src/app/dashboard/page.tsx:472:26
+Parsing ecmascript source code failed
+  470 |                             )}
+  471 |                         </div>
+> 472 |                 </header>
+      |                          ^
+> 473 |
+      | ^
+> 474 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  475 |                     {activeTab === 'tasks' && (
+  476 |                         <motion.div
+  477 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+[00:19:25.396] Server  LOG     ✓ Compiled in 187ms
+[00:19:26.407] Browser ERROR   ./Anything AI/frontend/src/app/dashboard/page.tsx:482:26
+Parsing ecmascript source code failed
+  480 |                             )}
+  481 |                         </div>
+> 482 |                 </header>
+      |                          ^
+> 483 |
+      | ^
+> 484 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  485 |                     {activeTab === 'tasks' && (
+  486 |                         <motion.div
+  487 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+[00:19:36.409] Browser ERROR   ./Anything AI/frontend/src/app/dashboard/page.tsx:483:26
+Parsing ecmascript source code failed
+  481 |                             )}
+  482 |                         </div>
+> 483 |                 </header>
+      |                          ^
+> 484 |
+      | ^
+> 485 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  486 |                     {activeTab === 'tasks' && (
+  487 |                         <motion.div
+  488 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+[00:19:45.409] Browser ERROR   ./Anything AI/frontend/src/app/dashboard/page.tsx:483:26
+Parsing ecmascript source code failed
+  481 |                             )}
+  482 |                         </div>
+> 483 |                 </header>
+      |                          ^
+> 484 |
+      | ^
+> 485 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  486 |                     {activeTab === 'tasks' && (
+  487 |                         <motion.div
+  488 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+[00:21:07.360] Server  ERROR   ⨯ ./Anything AI/frontend/src/app/dashboard/page.tsx:483:26
+Parsing ecmascript source code failed
+  481 |                             )}
+  482 |                         </div>
+> 483 |                 </header>
+      |                          ^
+> 484 |
+      | ^
+> 485 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  486 |                     {activeTab === 'tasks' && (
+  487 |                         <motion.div
+  488 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+
+[00:21:07.575] Browser ERROR   ./Anything AI/frontend/src/app/dashboard/page.tsx:483:26
+Parsing ecmascript source code failed
+  481 |                             )}
+  482 |                         </div>
+> 483 |                 </header>
+      |                          ^
+> 484 |
+      | ^
+> 485 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  486 |                     {activeTab === 'tasks' && (
+  487 |                         <motion.div
+  488 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+[00:21:09.385] Browser ERROR   ./Anything AI/frontend/src/app/dashboard/page.tsx:483:26
+Parsing ecmascript source code failed
+  481 |                             )}
+  482 |                         </div>
+> 483 |                 </header>
+      |                          ^
+> 484 |
+      | ^
+> 485 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  486 |                     {activeTab === 'tasks' && (
+  487 |                         <motion.div
+  488 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+[00:21:09.703] Browser ERROR   ./Anything AI/frontend/src/app/dashboard/page.tsx:483:26
+Parsing ecmascript source code failed
+  481 |                             )}
+  482 |                         </div>
+> 483 |                 </header>
+      |                          ^
+> 484 |
+      | ^
+> 485 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  486 |                     {activeTab === 'tasks' && (
+  487 |                         <motion.div
+  488 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+[00:21:10.727] Browser ERROR   ./Anything AI/frontend/src/app/dashboard/page.tsx:483:26
+Parsing ecmascript source code failed
+  481 |                             )}
+  482 |                         </div>
+> 483 |                 </header>
+      |                          ^
+> 484 |
+      | ^
+> 485 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  486 |                     {activeTab === 'tasks' && (
+  487 |                         <motion.div
+  488 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+[00:21:11.319] Browser ERROR   uncaughtError: Error: ./Anything AI/frontend/src/app/dashboard/page.tsx:483:26
+Parsing ecmascript source code failed
+  481 |                             )}
+  482 |                         </div>
+> 483 |                 </header>
+      |                          ^
+> 484 |
+      | ^
+> 485 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  486 |                     {activeTab === 'tasks' && (
+  487 |                         <motion.div
+  488 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+
+[00:21:11.465] Browser ERROR   ./Anything AI/frontend/src/app/dashboard/page.tsx:483:26
+Parsing ecmascript source code failed
+  481 |                             )}
+  482 |                         </div>
+> 483 |                 </header>
+      |                          ^
+> 484 |
+      | ^
+> 485 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  486 |                     {activeTab === 'tasks' && (
+  487 |                         <motion.div
+  488 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+[00:21:11.571] Browser ERROR   ./Anything AI/frontend/src/app/dashboard/page.tsx:483:26
+Parsing ecmascript source code failed
+  481 |                             )}
+  482 |                         </div>
+> 483 |                 </header>
+      |                          ^
+> 484 |
+      | ^
+> 485 |                 <AnimatePresence mode="wait">
+      | ^^^^^^^^^^^^^^^^^
+  486 |                     {activeTab === 'tasks' && (
+  487 |                         <motion.div
+  488 |                             key="tasks"
+
+Expected '</', got 'jsx text'
+
+Import traces:
+  Client Component Browser:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component Browser]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Client Component SSR]
+    ./Anything AI/frontend/src/app/dashboard/page.tsx [Server Component]
+[00:21:53.385] Server  LOG     ✓ Compiled in 464ms
+[00:21:55.605] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
