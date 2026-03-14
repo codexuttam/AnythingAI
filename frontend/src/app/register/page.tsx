@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
+import { Lock, Mail, User, Loader2, Sparkles } from 'lucide-react';
 
 export default function RegisterPage() {
     const [name, setName] = useState('');
@@ -20,7 +22,7 @@ export default function RegisterPage() {
             const response = await api.post('/auth/register', { name, email, password });
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
-            toast.success('Registration successful!');
+            toast.success('Account created successfully!');
             router.push('/dashboard');
         } catch (error: any) {
             toast.error(error.response?.data?.error || 'Registration failed');
@@ -30,63 +32,106 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
-            <div className="max-w-md w-full space-y-8 bg-gray-800 p-8 rounded-xl shadow-2xl">
-                <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-                        Create your account
+        <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+            {/* Decorative background blur */}
+            <motion.div
+                animate={{
+                    scale: [1.2, 1, 1.2],
+                    rotate: [90, 0, 90]
+                }}
+                transition={{ duration: 18, repeat: Infinity }}
+                className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-primary/20 rounded-full blur-[100px]"
+            />
+            <motion.div
+                animate={{
+                    scale: [1, 1.3, 1],
+                    rotate: [0, -90, 0]
+                }}
+                transition={{ duration: 22, repeat: Infinity }}
+                className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[120px]"
+            />
+
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9, rotateY: 10 }}
+                animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                whileHover={{ rotateY: -5, rotateX: 5 }}
+                className="max-w-md w-full glass-card p-12 rounded-[3rem] z-10"
+            >
+                <div className="text-center mb-12">
+                    <motion.div
+                        initial={{ rotate: -180, opacity: 0 }}
+                        animate={{ rotate: 0, opacity: 1 }}
+                        className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-secondary/10 mb-6 border border-secondary/20 shadow-xl shadow-secondary/5"
+                    >
+                        <Sparkles className="text-secondary w-10 h-10" />
+                    </motion.div>
+                    <h2 className="text-5xl font-black tracking-tighter text-white mb-3">
+                        INITIALIZE
                     </h2>
+                    <p className="text-slate-400 font-medium italic">Create your new digital identity</p>
                 </div>
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    <div className="rounded-md shadow-sm -space-y-px">
-                        <div>
+
+                <form className="space-y-6" onSubmit={handleSubmit}>
+                    <div className="space-y-4">
+                        <div className="relative group">
+                            <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-secondary transition-colors" />
                             <input
                                 type="text"
                                 required
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 placeholder-gray-500 text-white rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm bg-gray-700"
-                                placeholder="Full Name"
+                                className="w-full pl-14 pr-6 py-5 rounded-2xl glass-input text-white placeholder:text-slate-600 font-medium"
+                                placeholder="Full name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                             />
                         </div>
-                        <div>
+                        <div className="relative group">
+                            <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-secondary transition-colors" />
                             <input
                                 type="email"
                                 required
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 placeholder-gray-500 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm bg-gray-700"
+                                className="w-full pl-14 pr-6 py-5 rounded-2xl glass-input text-white placeholder:text-slate-600 font-medium"
                                 placeholder="Email address"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
-                        <div>
+                        <div className="relative group">
+                            <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-secondary transition-colors" />
                             <input
                                 type="password"
                                 required
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 placeholder-gray-500 text-white rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm bg-gray-700"
-                                placeholder="Password (min 6 chars)"
+                                className="w-full pl-14 pr-6 py-5 rounded-2xl glass-input text-white placeholder:text-slate-600 font-medium"
+                                placeholder="Secure password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
                     </div>
 
-                    <div>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                        >
-                            {loading ? 'Creating account...' : 'Register'}
-                        </button>
-                    </div>
+                    <motion.button
+                        whileHover={{ scale: 1.02, boxShadow: '0 20px 40px rgba(6, 182, 212, 0.3)' }}
+                        whileTap={{ scale: 0.98 }}
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-5 rounded-2xl bg-gradient-to-r from-secondary to-cyan-600 text-white font-black text-xl flex items-center justify-center gap-3 shadow-lg shadow-secondary/20"
+                    >
+                        {loading ? (
+                            <Loader2 className="w-6 h-6 animate-spin" />
+                        ) : (
+                            'START SEQUENCE'
+                        )}
+                    </motion.button>
                 </form>
-                <div className="text-center">
-                    <Link href="/login" className="text-indigo-400 hover:text-indigo-300 text-sm">
-                        Already have an account? Sign in
-                    </Link>
+
+                <div className="mt-10 text-center py-6 bg-white/5 border border-white/5 rounded-3xl transition-all hover:bg-white/10">
+                    <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">
+                        Already Exist? {' '}
+                        <Link href="/login" className="text-secondary hover:underline">
+                            Login
+                        </Link>
+                    </p>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 }
